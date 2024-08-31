@@ -1,9 +1,7 @@
 package com.stackoverflow.beta.repository.elastic;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.GetResponse;
-import com.stackoverflow.beta.model.Question;
 import com.stackoverflow.beta.model.elastic.QuestionESModel;
 import org.springframework.stereotype.Service;
 
