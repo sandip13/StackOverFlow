@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.concurrent.Executor;
 
-@Component
 @Configuration
 public class AsyncThreadPoolConfig {
 

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/search")
 public class SearchController {
 
-    private SearchService searchService;
+    private final SearchService searchService;
 
     @Autowired
     public SearchController(SearchService searchService){

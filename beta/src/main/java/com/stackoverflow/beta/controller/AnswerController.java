@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/answer")
 public class AnswerController {
 
-    private AnswerService answerService;
+    private final AnswerService answerService;
 
     @Autowired
     public AnswerController(AnswerService answerService) {

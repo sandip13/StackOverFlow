@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/file")
 public class StorageController {
 
-    private StorageService storageService;
+    private final StorageService storageService;
 
     @Autowired
     public StorageController(StorageService storageService) {
