@@ -8,18 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-/**
- * Controller for managing user.
- */
-
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -29,24 +22,28 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController (UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     /**
      * Registers a new user. Accessible by anyone.
      */
-    @PostMapping(path="/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserDetailsInput userDetailsInput) {
+    @PostMapping(path = "/register")
+    public ResponseEntity<User> registerUser(@RequestBody UserDetailsInput userDetailsInput) {
+        log.info("Received registration request for user: {}", userDetailsInput);
         try {
             User user = userService.registerUser(userDetailsInput);
+            log.info("User registered successfully: {}", user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (ValidationException e) {
+            log.error("Validation error during registration: {}", e.getMessage());
             return ResponseEntity.status(e.getStatus())
-                    .body(e.getMessage());
+                    .body(null);
         } catch (Exception e) {
+            log.error("Error during user registration: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+                    .body(null);
         }
     }
 }
