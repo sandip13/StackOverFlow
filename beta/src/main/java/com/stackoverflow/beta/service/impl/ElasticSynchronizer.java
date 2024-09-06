@@ -50,7 +50,7 @@ public class ElasticSynchronizer {
         questionESModel.setTitle( question.getTitle() );
         questionESModel.setContent( question.getContent() );
         questionESModel.setVotes(question.getVotes());
-        questionESModel.setAskedBy(userService.getUserById(question.getUserId()).get());
+        questionESModel.setUser(userService.getUserById(question.getUserId()).get());
         questionESModel.setTags(tags);
         questionESModel.setAnswers(new ArrayList<>());
         return questionESModel;
@@ -113,7 +113,7 @@ public class ElasticSynchronizer {
         answerESModel.setContent(answer.getContent());
         answerESModel.setId(answer.getId());
         answerESModel.setVotes(answer.getVotes());
-        answerESModel.setUserId(userService.getUserById(answer.getUserId()).get());
+        answerESModel.setUser(userService.getUserById(answer.getUserId()).get());
         if(null != answer.getMediaUrl()){
             answerESModel.setMediaUrl(answer.getMediaUrl());
         }

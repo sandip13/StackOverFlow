@@ -45,12 +45,16 @@ public class UserDetailsServiceImpl implements UserService {
     }
 
     private User createUser(UserDetailsInput userDetailsInput) {
-        Set<Role> roles = Set.of(Role.builder().name("WRITER").build());
+        // Fetch or create the WRITER role
+        Role writerRole = roleRepository.findByName("WRITER")
+                .orElseGet(() -> roleRepository.save(Role.builder().name("WRITER").build()));
+
+
         return User.builder()
                 .name(userDetailsInput.getName())
                 .email(userDetailsInput.getEmail())
                 .password(passwordEncoder.encode(userDetailsInput.getPassword()))
-                .roles(roles)
+                .roles(Set.of(writerRole))
                 .build();
     }
 

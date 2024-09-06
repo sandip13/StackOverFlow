@@ -1,5 +1,7 @@
 package com.stackoverflow.beta.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,13 +26,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
     private String name;
 
-    @Column
     private String email;
 
-    @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -44,6 +44,7 @@ public class User {
     /**
      * Convert user roles to Spring Security GrantedAuthority.
      */
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))

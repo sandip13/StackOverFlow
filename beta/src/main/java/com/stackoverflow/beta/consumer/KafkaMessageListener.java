@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,10 @@ public class KafkaMessageListener {
     @Autowired
     ElasticSynchronizer elasticSynchronizer;
 
-    @RetryableTopic(attempts = "4") // default -3, here 4 means n-1 attempts=3
+    @RetryableTopic(kafkaTemplate = "kafkaTemplate",
+            attempts = "2",
+            backoff = @Backoff(delay = 3000, multiplier = 1.5, maxDelay = 15000)
+    )
     @KafkaListener(topics = "stackoverflow-demo1", groupId = "sof-group-1")
     public void consume(QuestionESModel msg){
         try {
