@@ -1,59 +1,47 @@
 package com.stackoverflow.beta.service.impl;
 
-import com.stackoverflow.beta.exception.ValidationException;
 import com.stackoverflow.beta.model.User;
-import com.stackoverflow.beta.model.request.UserDetailsInput;
 import com.stackoverflow.beta.repository.UserRepository;
-import com.stackoverflow.beta.service.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
-@Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository){
-        this.userRepository =userRepository;
-    }
-
-    public User registerUser(UserDetailsInput userDetails) throws Exception {
-        if (emailExist(userDetails.getEmail())) {
-            log.error("User with same email address already exists");
-            throw new ValidationException
-                    ("Account already exists with email address: " + userDetails.getEmail(), HttpStatus.BAD_REQUEST);
-        }
-        try{
-            User user = User.builder()
-                    .name(userDetails.getName())
-                    .email(userDetails.getEmail())
-                    .build();
-            // Save the new user to the repository
-            User savedUser =  userRepository.save(user);
-            log.info("User created successfully");
-            return savedUser;
-        } catch (Exception e) {
-            log.error("Error occurred while creating user");
-            throw new Exception("Error occurred while creating user");
-        }
-
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public boolean isUserExist(int userId) {
-        return userRepository.existsById(userId);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + username);
+        }
+        return buildUserDetails(user);
     }
 
-    private boolean emailExist(String email){
-        return userRepository.findByEmail(email) != null;
-    }
+    private UserDetails buildUserDetails(User user) {
+        Set<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toSet());
 
-    @Override
-    public Optional<User> getUserById(int userId){
-        return userRepository.findById(userId);
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities(authorities)
+                .build();
     }
 }

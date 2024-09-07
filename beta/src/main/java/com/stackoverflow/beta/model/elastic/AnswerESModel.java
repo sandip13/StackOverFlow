@@ -14,7 +14,7 @@ public class AnswerESModel {
     private int id;
     private String content;
     private int votes;
-    private User userId;
+    private User user;
     private List<CommentESModel> comments;
     private String mediaUrl;
 }

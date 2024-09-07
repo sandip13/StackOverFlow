@@ -14,7 +14,7 @@ public class QuestionESModel {
     private int id;
     private String title;
     private String content;
-    private User askedBy;
+    private User user;
     private int votes;
     private List<String> tags;
     private List<AnswerESModel> answers;
